@@ -8,12 +8,20 @@ class UsersController < ApplicationController
   end
 
   def new
-  	@user = User.new
+    if signed_in?
+      flash[:error] = "Please sign out before trying to create a new user!"
+      redirect_to(root_path)
+    else
+    	@user = User.new
+    end
   end
 
   def create
   	@user = User.new(params[:user])
-  	if @user.save
+    if signed_in?
+      flash[:error] = "Please sign out before trying to create a new user!"
+      redirect_to(root_path)
+  	elsif @user.save
   	  sign_in @user
   	  flash[:success] = "Wecome to the Sample App!"
   	  redirect_to @user
